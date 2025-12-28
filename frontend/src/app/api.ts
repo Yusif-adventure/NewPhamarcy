@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://pharmacysite-z0bd.onrender.com/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://newphamarcy.onrender.com/api';
 
 export const api = {
   orders: {
