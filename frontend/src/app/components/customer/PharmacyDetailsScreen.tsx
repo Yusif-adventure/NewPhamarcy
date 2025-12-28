@@ -226,6 +226,26 @@ export function PharmacyDetailsScreen({
     }
   };
 
+  const handleCancelOrder = async () => {
+    if (!activeOrderId) return;
+    if (window.confirm("Are you sure you want to cancel this order?")) {
+      try {
+        await api.orders.deleteOrder(activeOrderId);
+        setActiveOrderId(null);
+        onUpdateData({
+          paymentStatus: "waiting",
+          orderStatus: "waiting",
+          paymentAmount: undefined,
+          riderName: undefined,
+          riderPhone: undefined,
+        });
+      } catch (error) {
+        console.error("Failed to cancel order:", error);
+        alert("Failed to cancel order");
+      }
+    }
+  };
+
   const getStatusText = () => {
     switch (customerData.orderStatus) {
       case "waiting":
@@ -331,6 +351,17 @@ export function PharmacyDetailsScreen({
             <CreditCard className="w-6 h-6" />
             <span>{getPayButtonText()}</span>
           </button>
+
+          {/* Cancel Button for stuck orders */}
+          {customerData.paymentStatus === "requested" && !customerData.paymentAmount && (
+            <button
+              onClick={handleCancelOrder}
+              className="w-full bg-red-100 text-red-600 py-4 px-6 rounded-xl shadow-sm flex items-center justify-center gap-3 hover:bg-red-200 transition-colors"
+            >
+              <Trash2 className="w-5 h-5" />
+              <span>Cancel Request</span>
+            </button>
+          )}
 
           {canViewDelivery ? (
             <button
