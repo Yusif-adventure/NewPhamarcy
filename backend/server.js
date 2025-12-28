@@ -51,7 +51,7 @@ const PORT = process.env.PORT || 3000;
 
 // Enable CORS
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, 'https://pharmacy-site-hazel.vercel.app', 'http://localhost:5173'],
+  origin: [process.env.FRONTEND_URL, 'https://new-phamarcy.vercel.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
