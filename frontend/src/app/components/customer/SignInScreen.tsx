@@ -153,7 +153,7 @@ export function SignInScreen({
           <button
             onClick={handleContinue}
             disabled={!phone.trim()}
-            className="w-full bg-white text-blue-600 py-5 px-6 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-12"
+            className="w-full bg-white text-blue-600 py-5 px-6 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-12 active:scale-95 active:bg-gray-100 hover:bg-gray-50 font-bold text-lg"
           >
             Continue
           </button>

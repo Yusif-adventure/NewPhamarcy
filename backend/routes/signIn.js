@@ -31,6 +31,7 @@ router.post('/', async (req, res) => {
     const { data: newCustomer, error: insertError } = await supabase
       .from('customers')
       .insert({ phone, name })
+      .select()
       .single();
 
     if (insertError) {

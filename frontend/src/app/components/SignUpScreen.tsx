@@ -47,48 +47,64 @@ export function SignUpScreen({
     }
   };
 
-  const bgColor = role === "pharmacy" ? "bg-green-600" : "bg-purple-600";
-  const textColor = role === "pharmacy" ? "text-green-100" : "text-purple-100";
-  const placeholderColor =
+  const bgImage =
     role === "pharmacy"
-      ? "placeholder:text-green-200"
-      : "placeholder:text-purple-200";
+      ? "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=2000&auto=format&fit=crop"
+      : "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=2000&auto=format&fit=crop";
+
+  const buttonColor =
+    role === "pharmacy"
+      ? "bg-green-500 hover:bg-green-600"
+      : "bg-purple-600 hover:bg-purple-700";
 
   return (
-    <div className={`min-h-screen ${bgColor} text-white`}>
-      <div className="p-6">
+    <div className="min-h-screen relative overflow-hidden text-white">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url("${bgImage}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60 z-0" />
+
+      <div className="p-6 relative z-10">
         <button onClick={onBack} className="mb-8">
           <ChevronLeft className="w-8 h-8" />
         </button>
 
-        <h1 className="mb-2">Sign Up</h1>
-        <p className={`${textColor} mb-12`}>
+        <h1 className="mb-2 text-3xl font-bold">Sign Up</h1>
+        <p className="text-gray-200 mb-12">
           {role === "pharmacy" ? "Sign up as a Pharmacy" : "Sign up as a Rider"}
         </p>
 
         {error && (
-          <p className="text-red-500 mb-4 bg-white/80 p-2 rounded">{error}</p>
+          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">{error}</p>
         )}
         {success && (
-          <p className="text-white mb-4 bg-green-500/50 p-2 rounded">
+          <p className="text-white mb-4 bg-green-500/80 p-2 rounded font-medium">
             {success}
           </p>
         )}
 
         <div className="space-y-6">
           <div>
-            <label className={`block mb-3 text-sm ${textColor}`}>Name *</label>
+            <label className="block mb-3 text-sm text-gray-200">Name *</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
-              className={`w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white ${placeholderColor} focus:outline-none focus:border-white`}
+              className="w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:border-white backdrop-blur-sm"
             />
           </div>
 
           <div>
-            <label className={`block mb-3 text-sm ${textColor}`}>
+            <label className="block mb-3 text-sm text-gray-200">
               Phone Number *
             </label>
             <input
@@ -96,30 +112,29 @@ export function SignUpScreen({
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Enter your phone number"
-              className={`w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white ${placeholderColor} focus:outline-none focus:border-white`}
+              className="w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:border-white backdrop-blur-sm"
             />
           </div>
 
           <div>
-            <label className={`block mb-3 text-sm ${textColor}`}>
+            <label className="block mb-3 text-sm text-gray-200">
               Password *
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className={`w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white ${placeholderColor} focus:outline-none focus:border-white`}
+              placeholder="Create a password"
+              className="w-full bg-white/10 border-2 border-white/30 rounded-xl px-6 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:border-white backdrop-blur-sm"
             />
           </div>
 
           <button
             onClick={handleSignUp}
-            className={`w-full bg-white ${
-              role === "pharmacy" ? "text-green-600" : "text-purple-600"
-            } py-5 px-6 rounded-xl shadow-lg transition-all mt-12 font-bold`}
+            disabled={!name.trim() || !phone.trim() || !password.trim()}
+            className={`w-full ${buttonColor} text-white py-5 px-6 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-12 font-bold text-lg active:scale-95 active:brightness-90`}
           >
-            Sign Up
+            Create Account
           </button>
         </div>
       </div>
