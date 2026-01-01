@@ -153,6 +153,22 @@ export function PharmacyDashboard({
     }
   };
 
+  const handleCancelOrder = async (orderId: string) => {
+    if (
+      window.confirm(
+        "Are you sure you want to cancel this order? This will remove it from the list."
+      )
+    ) {
+      try {
+        await api.orders.deleteOrder(orderId);
+        setOrders(orders.filter((o) => o.id !== orderId));
+      } catch (error) {
+        console.error("Error canceling order:", error);
+        alert("Failed to cancel order");
+      }
+    }
+  };
+
   const handlePackageHandedOver = () => {
     if (selectedOrder) {
       setOrders(
@@ -269,18 +285,26 @@ export function PharmacyDashboard({
                     className="border-2 border-gray-100 rounded-xl p-4"
                   >
                     <p className="mb-3">{order.customerPhone}</p>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleRequestRider(order.id)}
+                          className="flex-1 bg-purple-600 text-white py-3 px-4 rounded-lg text-sm font-medium"
+                        >
+                          Request Rider
+                        </button>
+                        <button
+                          onClick={() => handleCustomerPickup(order.id)}
+                          className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-200"
+                        >
+                          Picked Up
+                        </button>
+                      </div>
                       <button
-                        onClick={() => handleRequestRider(order.id)}
-                        className="flex-1 bg-purple-600 text-white py-3 px-4 rounded-lg text-sm font-medium"
+                        onClick={() => handleCancelOrder(order.id)}
+                        className="w-full bg-red-50 text-red-600 py-2 px-4 rounded-lg text-sm font-medium hover:bg-red-100 border border-red-100"
                       >
-                        Request Rider
-                      </button>
-                      <button
-                        onClick={() => handleCustomerPickup(order.id)}
-                        className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-200"
-                      >
-                        Picked Up
+                        Cancel Order
                       </button>
                     </div>
                   </div>
