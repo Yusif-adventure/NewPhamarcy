@@ -120,15 +120,15 @@ export function ChatScreen({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-[#efeae2]">
       {/* Header */}
-      <div className="bg-white p-4 shadow-sm flex items-center gap-3 z-10">
-        <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
-          <ChevronLeft className="w-6 h-6 text-gray-600" />
+      <div className="bg-[#008069] p-4 shadow-sm flex items-center gap-3 z-10 text-white">
+        <button onClick={onBack} className="p-2 hover:bg-[#006c59] rounded-full">
+          <ChevronLeft className="w-6 h-6 text-white" />
         </button>
         <div>
-          <h2 className="font-semibold text-gray-900">{otherName}</h2>
-          <p className="text-xs text-gray-500">{otherPhone}</p>
+          <h2 className="font-semibold text-white">{otherName}</h2>
+          <p className="text-xs text-green-100">{otherPhone}</p>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export function ChatScreen({
             <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-gray-500">
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
@@ -151,10 +151,10 @@ export function ChatScreen({
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl p-3 ${
+                  className={`max-w-[75%] rounded-2xl p-3 shadow-sm ${
                     isMe
-                      ? "bg-blue-600 text-white rounded-tr-none"
-                      : "bg-white text-gray-800 shadow-sm rounded-tl-none"
+                      ? "bg-[#d9fdd3] text-gray-900 rounded-tr-none"
+                      : "bg-white text-gray-900 rounded-tl-none"
                   }`}
                 >
                   {msg.image_url && (
@@ -165,11 +165,7 @@ export function ChatScreen({
                     />
                   )}
                   {msg.content && <p className="text-sm">{msg.content}</p>}
-                  <p
-                    className={`text-[10px] mt-1 text-right ${
-                      isMe ? "text-blue-100" : "text-gray-400"
-                    }`}
-                  >
+                  <p className="text-[10px] mt-1 text-right text-gray-500">
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -184,7 +180,7 @@ export function ChatScreen({
       </div>
 
       {/* Input Area */}
-      <div className="bg-white p-4 border-t border-gray-100 flex items-center gap-3">
+      <div className="bg-[#f0f2f5] p-3 border-t border-gray-200 flex items-center gap-2">
         <input
           type="file"
           accept="image/*"
@@ -194,7 +190,7 @@ export function ChatScreen({
         />
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"
           disabled={isSending}
         >
           <ImageIcon className="w-6 h-6" />
@@ -205,15 +201,15 @@ export function ChatScreen({
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Type a message..."
-          className="flex-1 bg-gray-100 border-0 rounded-full px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Type a message"
+          className="flex-1 bg-white border-0 rounded-lg px-4 py-2 focus:ring-0 outline-none"
           disabled={isSending}
         />
 
         <button
           onClick={handleSend}
           disabled={!newMessage.trim() || isSending}
-          className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-3 bg-[#00a884] text-white rounded-full hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSending ? (
             <Loader2 className="w-5 h-5 animate-spin" />
