@@ -8,6 +8,7 @@ import {
   History,
 } from "lucide-react";
 import { PaymentConfirmationModal } from "./PaymentConfirmationModal";
+import { PaymentEntryModal } from "./PaymentEntryModal";
 import { api } from "../../api";
 
 type CustomerData = {
@@ -51,9 +52,9 @@ export function PharmacyDetailsScreen({
   onBack,
 }: PharmacyDetailsScreenProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showEntryModal, setShowEntryModal] = useState(false);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const [history, setHistory] = useState<OrderHistoryItem[]>([]);
-  const [enteredAmount, setEnteredAmount] = useState("");
 
   // Poll for active order status
   useEffect(() => {
@@ -140,55 +141,55 @@ export function PharmacyDetailsScreen({
   }, [customerData.phone]);
 
   // Handle customer requesting to pay
-    const handleRequestPayment = async () => {
+  const handleRequestPayment = () => {
     if (customerData.paymentStatus === "waiting") {
-      // Customer is initiating payment with entered amount
-      if (!enteredAmount || isNaN(Number(enteredAmount)) || Number(enteredAmount) <= 0) {
-        alert("Please enter a valid amount");
-        return;
-      }
-
-      try {
-        const pharmacyPhone = customerData.selectedPharmacyPhone;
-
-        if (!pharmacyPhone) {
-          alert(
-            "Error: Pharmacy phone number not found. Please go back and select the pharmacy again."
-          );
-          return;
-        }
-
-        console.log("Creating order with:", {
-          customerPhone: customerData.phone,
-          pharmacyPhone,
-          amount: Number(enteredAmount)
-        });
-
-        const order = await api.orders.create(
-          customerData.phone,
-          pharmacyPhone,
-          Number(enteredAmount)
-        );
-        setActiveOrderId(order.id);
-
-        onUpdateData({
-          paymentStatus: "requested",
-          orderStatus: "waiting",
-          paymentAmount: Number(enteredAmount)
-        });
-        
-        // Open payment modal immediately
-        setShowPaymentModal(true);
-      } catch (error: any) {
-        console.error("Failed to create order:", error);
-        alert(`Failed to initiate payment: ${error.message}`);
-      }
+      // Open entry modal for customer to enter amount
+      setShowEntryModal(true);
     } else if (
       customerData.paymentStatus === "requested" &&
       customerData.paymentAmount
     ) {
       // Customer received amount from pharmacy (legacy flow) or re-trying payment
       setShowPaymentModal(true);
+    }
+  };
+
+  const handleEntryConfirm = async (amount: number) => {
+    try {
+      const pharmacyPhone = customerData.selectedPharmacyPhone;
+
+      if (!pharmacyPhone) {
+        alert(
+          "Error: Pharmacy phone number not found. Please go back and select the pharmacy again."
+        );
+        return;
+      }
+
+      console.log("Creating order with:", {
+        customerPhone: customerData.phone,
+        pharmacyPhone,
+        amount,
+      });
+
+      const order = await api.orders.create(
+        customerData.phone,
+        pharmacyPhone,
+        amount
+      );
+      setActiveOrderId(order.id);
+
+      onUpdateData({
+        paymentStatus: "requested",
+        orderStatus: "waiting",
+        paymentAmount: amount,
+      });
+
+      // Close entry modal and open payment modal immediately
+      setShowEntryModal(false);
+      setShowPaymentModal(true);
+    } catch (error: any) {
+      console.error("Failed to create order:", error);
+      alert(`Failed to initiate payment: ${error.message}`);
     }
   };
 
@@ -352,24 +353,9 @@ export function PharmacyDetailsScreen({
             <span>📞 Call Pharmacy</span>
           </button>
 
-          {customerData.paymentStatus === "waiting" && (
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter Amount to Pay (GHS)
-              </label>
-              <input
-                type="number"
-                value={enteredAmount}
-                onChange={(e) => setEnteredAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg"
-              />
-            </div>
-          )}
-
           <button
             onClick={handleRequestPayment}
-            disabled={!isPayButtonEnabled() && !enteredAmount}
+            disabled={!isPayButtonEnabled()}
             className="w-full bg-blue-600 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <CreditCard className="w-6 h-6" />
@@ -455,6 +441,15 @@ export function PharmacyDetailsScreen({
           </div>
         )}
       </div>
+
+      {showEntryModal && (
+        <PaymentEntryModal
+          pharmacyName={customerData.selectedPharmacy || "Pharmacy"}
+          pharmacyPhone={customerData.selectedPharmacyPhone || ""}
+          onConfirm={handleEntryConfirm}
+          onCancel={() => setShowEntryModal(false)}
+        />
+      )}
 
       {showPaymentModal && (
         <PaymentConfirmationModal
