@@ -157,7 +157,8 @@ export function PharmacyDetailsScreen({
   const handleRequestPayment = () => {
     if (
       customerData.paymentStatus === "waiting" ||
-      customerData.orderStatus === "delivered"
+      customerData.orderStatus === "delivered" ||
+      customerData.paymentStatus === "paid"
     ) {
       // Open entry modal for customer to enter amount
       setShowEntryModal(true);
@@ -318,17 +319,23 @@ export function PharmacyDetailsScreen({
       customerData.paymentAmount
     ) {
       return `💳 Pay GHS ${customerData.paymentAmount}`;
+    } else if (customerData.paymentStatus === "paid") {
+      return "💳 Pay for New Order";
     } else {
       return "✓ Payment Complete";
     }
   };
 
   const isPayButtonEnabled = () => {
+    // Always enable pay button unless we are waiting for pharmacy to enter amount (legacy flow)
+    // Even then, we might want to allow user to override.
+    // For now, let's enable it if we are waiting, requested with amount, delivered, OR paid.
     return (
       customerData.paymentStatus === "waiting" ||
       (customerData.paymentStatus === "requested" &&
         customerData.paymentAmount) ||
-      customerData.orderStatus === "delivered"
+      customerData.orderStatus === "delivered" ||
+      customerData.paymentStatus === "paid"
     );
   };
 
@@ -390,7 +397,7 @@ export function PharmacyDetailsScreen({
               </button>
             )}
 
-          {canViewDelivery ? (
+          {canViewDelivery && (
             <button
               onClick={onViewDelivery}
               className="w-full bg-purple-600 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3"
@@ -398,11 +405,6 @@ export function PharmacyDetailsScreen({
               <Truck className="w-6 h-6" />
               <span>🚚 View Delivery Status</span>
             </button>
-          ) : (
-            <div className="w-full bg-gray-100 text-gray-500 py-6 px-6 rounded-xl flex items-center justify-center gap-3">
-              <Truck className="w-6 h-6" />
-              <span>🚚 Delivery Status</span>
-            </div>
           )}
         </div>
 
