@@ -191,6 +191,14 @@ export function PharmacyDashboard({
     (o) => o.status === "out-for-delivery" || o.status === "delivered"
   );
 
+  const paymentHistory = orders.filter(
+    (o) =>
+      o.status === "payment-received" ||
+      o.status === "ready" ||
+      o.status === "out-for-delivery" ||
+      o.status === "delivered"
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-green-600 text-white p-6 pb-8">
@@ -400,6 +408,60 @@ export function PharmacyDashboard({
                             </span>
                           </div>
                         </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Payment History */}
+        <div className="bg-white rounded-2xl p-6 shadow-md overflow-hidden">
+          <h3 className="mb-4">💰 Payment History</h3>
+          {paymentHistory.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">
+              No payment history
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-100 text-sm text-gray-500">
+                    <th className="py-3 font-medium">Date & Time</th>
+                    <th className="py-3 font-medium">Customer</th>
+                    <th className="py-3 font-medium">Amount</th>
+                    <th className="py-3 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentHistory.map((order) => (
+                    <tr
+                      key={order.id}
+                      className="border-b border-gray-50 last:border-0"
+                    >
+                      <td className="py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-900">
+                            {new Date(order.created_at).toLocaleDateString()}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(order.created_at).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 text-sm">{order.customerPhone}</td>
+                      <td className="py-4 font-medium text-green-600">
+                        GHS {order.amount}
+                      </td>
+                      <td className="py-4">
+                        <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                          Paid
+                        </span>
                       </td>
                     </tr>
                   ))}
