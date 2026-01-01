@@ -4,7 +4,7 @@ import { API_BASE_URL } from "../../api";
 import { ChevronLeft } from "lucide-react";
 
 type PharmacyLoginScreenProps = {
-  onLogin: (name: string, phone: string) => void;
+  onLogin: (name: string, phone: string, location?: { lat: number; lng: number }) => void;
   onSignUp: () => void;
   onBack: () => void;
 };
@@ -31,8 +31,10 @@ export function PharmacyLoginScreen({
         password,
       });
 
-      const { name, phone: userPhone } = response.data.data;
-      onLogin(name, userPhone);
+      const { name, phone: userPhone, latitude, longitude } = response.data.data;
+      
+      const location = latitude && longitude ? { lat: latitude, lng: longitude } : undefined;
+      onLogin(name, userPhone, location);
     } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid credentials. Please try again.");
@@ -64,7 +66,9 @@ export function PharmacyLoginScreen({
         <p className="text-gray-200 mb-12">Access your pharmacy dashboard</p>
 
         {error && (
-          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">{error}</p>
+          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">
+            {error}
+          </p>
         )}
 
         <div className="space-y-6">
@@ -82,9 +86,7 @@ export function PharmacyLoginScreen({
           </div>
 
           <div>
-            <label className="block mb-3 text-sm text-gray-200">
-              Password
-            </label>
+            <label className="block mb-3 text-sm text-gray-200">Password</label>
             <input
               type="password"
               value={password}

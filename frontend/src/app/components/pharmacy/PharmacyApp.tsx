@@ -29,9 +29,13 @@ export function PharmacyApp({ onBack }: { onBack: () => void }) {
     <>
       {screen === "login" && (
         <PharmacyLoginScreen
-          onLogin={(name, phone) => {
-            updatePharmacyData({ name, phone });
-            setScreen("location");
+          onLogin={(name, phone, location) => {
+            updatePharmacyData({ name, phone, location, hasLocation: !!location });
+            if (location) {
+              setScreen("dashboard");
+            } else {
+              setScreen("location");
+            }
           }}
           onSignUp={() => setScreen("signup")}
           onBack={onBack}
