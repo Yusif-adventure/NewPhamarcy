@@ -142,7 +142,10 @@ export function PharmacyDetailsScreen({
 
   // Handle customer requesting to pay
   const handleRequestPayment = () => {
-    if (customerData.paymentStatus === "waiting") {
+    if (
+      customerData.paymentStatus === "waiting" ||
+      customerData.orderStatus === "delivered"
+    ) {
       // Open entry modal for customer to enter amount
       setShowEntryModal(true);
     } else if (
