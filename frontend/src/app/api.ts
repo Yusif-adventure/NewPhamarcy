@@ -2,11 +2,11 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://newphamarcy
 
 export const api = {
   orders: {
-    create: async (customerPhone: string, pharmacyPhone: string) => {
+    create: async (customerPhone: string, pharmacyPhone: string, amount?: number) => {
       const response = await fetch(`${API_BASE_URL}/orders/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerPhone, pharmacyPhone }),
+        body: JSON.stringify({ customerPhone, pharmacyPhone, amount }),
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

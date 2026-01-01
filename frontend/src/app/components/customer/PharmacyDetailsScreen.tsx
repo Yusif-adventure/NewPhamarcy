@@ -53,6 +53,7 @@ export function PharmacyDetailsScreen({
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const [history, setHistory] = useState<OrderHistoryItem[]>([]);
+  const [enteredAmount, setEnteredAmount] = useState("");
 
   // Poll for active order status
   useEffect(() => {
@@ -139,13 +140,15 @@ export function PharmacyDetailsScreen({
   }, [customerData.phone]);
 
   // Handle customer requesting to pay
-  const handleRequestPayment = async () => {
-    if (
-      customerData.paymentStatus === "waiting" ||
-      customerData.orderStatus === "delivered"
-    ) {
+    const handleRequestPayment = async () => {
+    if (customerData.paymentStatus === "waiting") {
+      // Customer is initiating payment with entered amount
+      if (!enteredAmount || isNaN(Number(enteredAmount)) || Number(enteredAmount) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+      }
+
       try {
-        // Use the selected pharmacy's phone number
         const pharmacyPhone = customerData.selectedPharmacyPhone;
 
         if (!pharmacyPhone) {
@@ -158,27 +161,33 @@ export function PharmacyDetailsScreen({
         console.log("Creating order with:", {
           customerPhone: customerData.phone,
           pharmacyPhone,
+          amount: Number(enteredAmount)
         });
 
         const order = await api.orders.create(
           customerData.phone,
-          pharmacyPhone
+          pharmacyPhone,
+          Number(enteredAmount)
         );
         setActiveOrderId(order.id);
 
         onUpdateData({
           paymentStatus: "requested",
           orderStatus: "waiting",
+          paymentAmount: Number(enteredAmount)
         });
+        
+        // Open payment modal immediately
+        setShowPaymentModal(true);
       } catch (error: any) {
         console.error("Failed to create order:", error);
-        alert(`Failed to request payment: ${error.message}`);
+        alert(`Failed to initiate payment: ${error.message}`);
       }
     } else if (
       customerData.paymentStatus === "requested" &&
       customerData.paymentAmount
     ) {
-      // Customer received amount from pharmacy, now confirm payment
+      // Customer received amount from pharmacy (legacy flow) or re-trying payment
       setShowPaymentModal(true);
     }
   };
@@ -343,9 +352,24 @@ export function PharmacyDetailsScreen({
             <span>📞 Call Pharmacy</span>
           </button>
 
+          {customerData.paymentStatus === "waiting" && (
+            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Amount to Pay (GHS)
+              </label>
+              <input
+                type="number"
+                value={enteredAmount}
+                onChange={(e) => setEnteredAmount(e.target.value)}
+                placeholder="0.00"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg"
+              />
+            </div>
+          )}
+
           <button
             onClick={handleRequestPayment}
-            disabled={!isPayButtonEnabled()}
+            disabled={!isPayButtonEnabled() && !enteredAmount}
             className="w-full bg-blue-600 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <CreditCard className="w-6 h-6" />
@@ -353,15 +377,16 @@ export function PharmacyDetailsScreen({
           </button>
 
           {/* Cancel Button for stuck orders */}
-          {customerData.paymentStatus === "requested" && !customerData.paymentAmount && (
-            <button
-              onClick={handleCancelOrder}
-              className="w-full bg-red-100 text-red-600 py-4 px-6 rounded-xl shadow-sm flex items-center justify-center gap-3 hover:bg-red-200 transition-colors"
-            >
-              <Trash2 className="w-5 h-5" />
-              <span>Cancel Request</span>
-            </button>
-          )}
+          {customerData.paymentStatus === "requested" &&
+            !customerData.paymentAmount && (
+              <button
+                onClick={handleCancelOrder}
+                className="w-full bg-red-100 text-red-600 py-4 px-6 rounded-xl shadow-sm flex items-center justify-center gap-3 hover:bg-red-200 transition-colors"
+              >
+                <Trash2 className="w-5 h-5" />
+                <span>Cancel Request</span>
+              </button>
+            )}
 
           {canViewDelivery ? (
             <button

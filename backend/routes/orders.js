@@ -4,20 +4,23 @@ const { supabase } = require('../supabaseClient');
 
 // Create new order
 router.post('/create', async (req, res) => {
-  const { customerPhone, pharmacyPhone } = req.body;
+  const { customerPhone, pharmacyPhone, amount } = req.body;
 
   if (!customerPhone || !pharmacyPhone) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
+    const newOrder = {
+      customer_phone: customerPhone, 
+      pharmacy_phone: pharmacyPhone,
+      status: amount ? 'payment-pending' : 'new',
+      ...(amount && { amount: parseFloat(amount) })
+    };
+
     const { data, error } = await supabase
       .from('orders')
-      .insert({ 
-        customer_phone: customerPhone, 
-        pharmacy_phone: pharmacyPhone,
-        status: 'new'
-      })
+      .insert(newOrder)
       .select()
       .single();
 
