@@ -10,11 +10,13 @@ type Order = {
 type SearchingRiderModalProps = {
   order: Order;
   onClose: () => void;
+  onCancelRequest?: () => void;
 };
 
 export function SearchingRiderModal({
   order,
   onClose,
+  onCancelRequest,
 }: SearchingRiderModalProps) {
   const isFound = order.status === "out-for-delivery";
 
@@ -27,9 +29,17 @@ export function SearchingRiderModal({
               <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Searching for Rider</h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 mb-6">
               Please wait while we find a nearby rider for your delivery...
             </p>
+            {onCancelRequest && (
+              <button
+                onClick={onCancelRequest}
+                className="text-red-600 font-medium hover:bg-red-50 px-4 py-2 rounded-lg transition-colors"
+              >
+                Cancel Request
+              </button>
+            )}
           </div>
         ) : (
           <div className="py-4">

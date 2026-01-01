@@ -116,6 +116,27 @@ export function PharmacyDashboard({
     }
   };
 
+  const handleCancelRiderRequest = async () => {
+    if (searchingOrderId) {
+      if (window.confirm("Are you sure you want to cancel the rider request?")) {
+        try {
+          await api.orders.cancelRiderRequest(searchingOrderId);
+          setOrders(
+            orders.map((o) =>
+              o.id === searchingOrderId
+                ? { ...o, status: "payment-received" as const }
+                : o
+            )
+          );
+          setSearchingOrderId(null);
+        } catch (error) {
+          console.error("Error canceling rider request:", error);
+          alert("Failed to cancel rider request");
+        }
+      }
+    }
+  };
+
   const handlePackageHandedOver = () => {
     if (selectedOrder) {
       setOrders(
@@ -363,6 +384,7 @@ export function PharmacyDashboard({
         <SearchingRiderModal
           order={orders.find((o) => o.id === searchingOrderId)!}
           onClose={() => setSearchingOrderId(null)}
+          onCancelRequest={handleCancelRiderRequest}
         />
       )}
     </div>

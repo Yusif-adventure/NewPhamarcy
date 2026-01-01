@@ -66,6 +66,16 @@ export const api = {
       return response.json();
     },
 
+    cancelRiderRequest: async (orderId: string) => {
+      const response = await fetch(`${API_BASE_URL}/orders/cancel-rider-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      });
+      if (!response.ok) throw new Error('Failed to cancel rider request');
+      return response.json();
+    },
+
     acceptDelivery: async (orderId: string, riderName: string, riderPhone: string) => {
       const response = await fetch(`${API_BASE_URL}/orders/accept-delivery`, {
         method: 'POST',

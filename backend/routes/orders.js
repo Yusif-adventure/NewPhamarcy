@@ -161,6 +161,27 @@ router.post('/request-rider', async (req, res) => {
   }
 });
 
+// Cancel rider request (Pharmacy cancels)
+router.post('/cancel-rider-request', async (req, res) => {
+  const { orderId } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ status: 'payment-received' })
+      .eq('id', orderId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error canceling rider request:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Accept delivery (Rider accepts)
 router.post('/accept-delivery', async (req, res) => {
   const { orderId, riderName, riderPhone } = req.body;
