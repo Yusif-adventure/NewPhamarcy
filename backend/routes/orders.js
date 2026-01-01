@@ -182,6 +182,27 @@ router.post('/cancel-rider-request', async (req, res) => {
   }
 });
 
+// Mark as picked up (Pharmacy completes without rider)
+router.post('/mark-picked-up', async (req, res) => {
+  const { orderId } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ status: 'delivered' })
+      .eq('id', orderId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error marking as picked up:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Accept delivery (Rider accepts)
 router.post('/accept-delivery', async (req, res) => {
   const { orderId, riderName, riderPhone } = req.body;

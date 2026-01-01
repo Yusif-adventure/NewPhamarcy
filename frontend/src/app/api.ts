@@ -76,6 +76,16 @@ export const api = {
       return response.json();
     },
 
+    markAsPickedUp: async (orderId: string) => {
+      const response = await fetch(`${API_BASE_URL}/orders/mark-picked-up`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      });
+      if (!response.ok) throw new Error('Failed to mark as picked up');
+      return response.json();
+    },
+
     acceptDelivery: async (orderId: string, riderName: string, riderPhone: string) => {
       const response = await fetch(`${API_BASE_URL}/orders/accept-delivery`, {
         method: 'POST',

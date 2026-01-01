@@ -137,6 +137,22 @@ export function PharmacyDashboard({
     }
   };
 
+  const handleCustomerPickup = async (orderId: string) => {
+    if (window.confirm("Confirm that customer has picked up the order?")) {
+      try {
+        await api.orders.markAsPickedUp(orderId);
+        setOrders(
+          orders.map((o) =>
+            o.id === orderId ? { ...o, status: "delivered" as const } : o
+          )
+        );
+      } catch (error) {
+        console.error("Error marking as picked up:", error);
+        alert("Failed to update order");
+      }
+    }
+  };
+
   const handlePackageHandedOver = () => {
     if (selectedOrder) {
       setOrders(
@@ -253,12 +269,20 @@ export function PharmacyDashboard({
                     className="border-2 border-gray-100 rounded-xl p-4"
                   >
                     <p className="mb-3">{order.customerPhone}</p>
-                    <button
-                      onClick={() => handleRequestRider(order.id)}
-                      className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg"
-                    >
-                      Request Rider
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleRequestRider(order.id)}
+                        className="flex-1 bg-purple-600 text-white py-3 px-4 rounded-lg text-sm font-medium"
+                      >
+                        Request Rider
+                      </button>
+                      <button
+                        onClick={() => handleCustomerPickup(order.id)}
+                        className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-200"
+                      >
+                        Picked Up
+                      </button>
+                    </div>
                   </div>
                 ))}
             </div>
