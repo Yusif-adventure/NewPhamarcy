@@ -6,9 +6,11 @@ import {
   Truck,
   Trash2,
   History,
+  MessageCircle,
 } from "lucide-react";
 import { PaymentConfirmationModal } from "./PaymentConfirmationModal";
 import { PaymentEntryModal } from "./PaymentEntryModal";
+import { ChatScreen } from "../ChatScreen";
 import { api } from "../../api";
 
 type CustomerData = {
@@ -53,6 +55,7 @@ export function PharmacyDetailsScreen({
 }: PharmacyDetailsScreenProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const [history, setHistory] = useState<OrderHistoryItem[]>([]);
 
@@ -344,6 +347,17 @@ export function PharmacyDetailsScreen({
     customerData.orderStatus === "rider-on-way" ||
     customerData.orderStatus === "delivered";
 
+  if (showChat) {
+    return (
+      <ChatScreen
+        myPhone={customerData.phone}
+        otherPhone={customerData.selectedPharmacyPhone || ""}
+        otherName={customerData.selectedPharmacy || "Pharmacy"}
+        onBack={() => setShowChat(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-6">
@@ -362,19 +376,28 @@ export function PharmacyDetailsScreen({
         </div>
 
         <div className="space-y-4 mb-8">
-          <button
-            onClick={() => {
-              if (customerData.selectedPharmacyPhone) {
-                window.location.href = `tel:${customerData.selectedPharmacyPhone}`;
-              } else {
-                alert("Pharmacy phone number not available");
-              }
-            }}
-            className="w-full bg-green-600 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3"
-          >
-            <Phone className="w-6 h-6" />
-            <span>📞 Call Pharmacy</span>
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                if (customerData.selectedPharmacyPhone) {
+                  window.location.href = `tel:${customerData.selectedPharmacyPhone}`;
+                } else {
+                  alert("Pharmacy phone number not available");
+                }
+              }}
+              className="flex-1 bg-green-600 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3"
+            >
+              <Phone className="w-6 h-6" />
+              <span>Call</span>
+            </button>
+            <button
+              onClick={() => setShowChat(true)}
+              className="flex-1 bg-blue-500 text-white py-6 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3"
+            >
+              <MessageCircle className="w-6 h-6" />
+              <span>Chat</span>
+            </button>
+          </div>
 
           <button
             onClick={handleRequestPayment}

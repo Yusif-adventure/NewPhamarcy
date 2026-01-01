@@ -83,7 +83,9 @@ export function SignUpScreen({
         </p>
 
         {error && (
-          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">{error}</p>
+          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">
+            {error}
+          </p>
         )}
         {success && (
           <p className="text-white mb-4 bg-green-500/80 p-2 rounded font-medium">

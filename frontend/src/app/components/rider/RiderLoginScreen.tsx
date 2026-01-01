@@ -64,7 +64,9 @@ export function RiderLoginScreen({
         <p className="text-gray-200 mb-12">Access your rider dashboard</p>
 
         {error && (
-          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">{error}</p>
+          <p className="text-red-500 mb-4 bg-white/90 p-2 rounded font-medium">
+            {error}
+          </p>
         )}
 
         <div className="space-y-6">
@@ -82,9 +84,7 @@ export function RiderLoginScreen({
           </div>
 
           <div>
-            <label className="block mb-3 text-sm text-gray-200">
-              Password
-            </label>
+            <label className="block mb-3 text-sm text-gray-200">Password</label>
             <input
               type="password"
               value={password}

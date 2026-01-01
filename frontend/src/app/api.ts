@@ -154,5 +154,38 @@ export const api = {
       if (!response.ok) throw new Error('Failed to get order');
       return response.json();
     },
+  },
+  chat: {
+    send: async (senderPhone: string, receiverPhone: string, content?: string, image?: string) => {
+      const response = await fetch(`${API_BASE_URL}/chat/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderPhone, receiverPhone, content, image }),
+      });
+      if (!response.ok) throw new Error('Failed to send message');
+      return response.json();
+    },
+
+    getConversation: async (user1: string, user2: string) => {
+      const response = await fetch(`${API_BASE_URL}/chat/conversation/${user1}/${user2}`);
+      if (!response.ok) throw new Error('Failed to get conversation');
+      return response.json();
+    },
+
+    getList: async (phone: string) => {
+      const response = await fetch(`${API_BASE_URL}/chat/list/${phone}`);
+      if (!response.ok) throw new Error('Failed to get chat list');
+      return response.json();
+    },
+
+    markAsRead: async (senderPhone: string, receiverPhone: string) => {
+      const response = await fetch(`${API_BASE_URL}/chat/read`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderPhone, receiverPhone }),
+      });
+      if (!response.ok) throw new Error('Failed to mark as read');
+      return response.json();
+    },
   }
 };

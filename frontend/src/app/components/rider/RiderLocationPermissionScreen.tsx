@@ -53,7 +53,9 @@ export function RiderLocationPermissionScreen({
         saveLocation(ipLoc.lat, ipLoc.lng);
       } else {
         setIsLoading(false);
-        setError("Unable to retrieve your location. Please enable location services.");
+        setError(
+          "Unable to retrieve your location. Please enable location services."
+        );
       }
     };
 

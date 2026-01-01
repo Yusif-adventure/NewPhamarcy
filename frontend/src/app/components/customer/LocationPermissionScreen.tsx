@@ -32,7 +32,9 @@ export function LocationPermissionScreen({
         handleSuccess(ipLoc.lat, ipLoc.lng);
       } else {
         setIsLoading(false);
-        setError("Unable to retrieve your location. Please enable location services.");
+        setError(
+          "Unable to retrieve your location. Please enable location services."
+        );
       }
     };
 

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, CheckCircle, History } from "lucide-react";
+import { ChevronLeft, CheckCircle, History, MessageCircle } from "lucide-react";
 import { EnterCostModal } from "./EnterCostModal";
 import { RiderAssignedModal } from "./RiderAssignedModal";
 import { SearchingRiderModal } from "./SearchingRiderModal";
 import { PaymentHistoryModal } from "./PaymentHistoryModal";
+import { ChatListScreen } from "./ChatListScreen";
 import { api } from "../../api";
 
 type Order = {
@@ -42,6 +43,7 @@ export function PharmacyDashboard({
   const [showCostModal, setShowCostModal] = useState(false);
   const [showRiderModal, setShowRiderModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showChatList, setShowChatList] = useState(false);
   const [searchingOrderId, setSearchingOrderId] = useState<string | null>(null);
 
   // Poll for orders
@@ -120,7 +122,9 @@ export function PharmacyDashboard({
 
   const handleCancelRiderRequest = async () => {
     if (searchingOrderId) {
-      if (window.confirm("Are you sure you want to cancel the rider request?")) {
+      if (
+        window.confirm("Are you sure you want to cancel the rider request?")
+      ) {
         try {
           await api.orders.cancelRiderRequest(searchingOrderId);
           setOrders(
@@ -201,6 +205,15 @@ export function PharmacyDashboard({
       o.status === "delivered"
   );
 
+  if (showChatList) {
+    return (
+      <ChatListScreen
+        myPhone={pharmacyData.phone}
+        onBack={() => setShowChatList(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-green-600 text-white p-6 pb-8">
@@ -208,13 +221,22 @@ export function PharmacyDashboard({
           <button onClick={onBack}>
             <ChevronLeft className="w-8 h-8" />
           </button>
-          <button
-            onClick={() => setShowHistoryModal(true)}
-            className="flex items-center gap-2 bg-green-700 hover:bg-green-800 px-4 py-2 rounded-lg transition-colors"
-          >
-            <History className="w-5 h-5" />
-            <span className="text-sm font-medium">History</span>
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowChatList(true)}
+              className="flex items-center gap-2 bg-green-700 hover:bg-green-800 px-4 py-2 rounded-lg transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">Messages</span>
+            </button>
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="flex items-center gap-2 bg-green-700 hover:bg-green-800 px-4 py-2 rounded-lg transition-colors"
+            >
+              <History className="w-5 h-5" />
+              <span className="text-sm font-medium">History</span>
+            </button>
+          </div>
         </div>
         <h1 className="mb-1">{pharmacyData.name}</h1>
         <p className="text-green-100">Dashboard</p>

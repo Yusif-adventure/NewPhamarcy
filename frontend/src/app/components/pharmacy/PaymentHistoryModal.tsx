@@ -13,7 +13,10 @@ type PaymentHistoryModalProps = {
   onClose: () => void;
 };
 
-export function PaymentHistoryModal({ orders, onClose }: PaymentHistoryModalProps) {
+export function PaymentHistoryModal({
+  orders,
+  onClose,
+}: PaymentHistoryModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[80vh] flex flex-col shadow-xl animate-in fade-in zoom-in duration-200">

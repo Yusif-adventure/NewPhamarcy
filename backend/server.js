@@ -21,11 +21,12 @@
 // // Routes
 // app.use('/api/signin', signInRoute);
 // app.use('/api', authRoute); // This will expose /api/signup and /api/login
-// app.use('/api/user', userRoute); // This will expose /api/user/update-location
-// app.use('/api/pharmacies', pharmaciesRoute); // This will expose /api/pharmacies
-// app.use('/api/orders', ordersRoute); // This will expose /api/orders
+app.use('/api/user', userRoute); // This will expose /api/user/update-location
+app.use('/api/pharmacies', pharmaciesRoute); // This will expose /api/pharmacies
+app.use('/api/orders', ordersRoute); // This will expose /api/orders
+app.use('/api/chat', chatRoute); // This will expose /api/chat
 
-// app.get('/', (req, res) => {
+app.get('/', (req, res) => {
 //   res.send('Backend is running!');
 // });
 
@@ -45,6 +46,7 @@ const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
 const pharmaciesRoute = require('./routes/pharmacies');
 const ordersRoute = require('./routes/orders');
+const chatRoute = require('./routes/chat');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -65,6 +67,7 @@ app.use('/api', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/pharmacies', pharmaciesRoute);
 app.use('/api/orders', ordersRoute);
+app.use('/api/chat', chatRoute);
 
 // Health check
 app.get('/', (req, res) => {

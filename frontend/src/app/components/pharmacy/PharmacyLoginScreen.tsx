@@ -4,7 +4,11 @@ import { API_BASE_URL } from "../../api";
 import { ChevronLeft } from "lucide-react";
 
 type PharmacyLoginScreenProps = {
-  onLogin: (name: string, phone: string, location?: { lat: number; lng: number }) => void;
+  onLogin: (
+    name: string,
+    phone: string,
+    location?: { lat: number; lng: number }
+  ) => void;
   onSignUp: () => void;
   onBack: () => void;
 };
@@ -31,9 +35,15 @@ export function PharmacyLoginScreen({
         password,
       });
 
-      const { name, phone: userPhone, latitude, longitude } = response.data.data;
-      
-      const location = latitude && longitude ? { lat: latitude, lng: longitude } : undefined;
+      const {
+        name,
+        phone: userPhone,
+        latitude,
+        longitude,
+      } = response.data.data;
+
+      const location =
+        latitude && longitude ? { lat: latitude, lng: longitude } : undefined;
       onLogin(name, userPhone, location);
     } catch (err) {
       console.error("Login failed:", err);

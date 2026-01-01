@@ -19,7 +19,7 @@ export function PaymentEntryModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-in fade-in zoom-in duration-200">
         <h3 className="text-xl font-bold mb-4 text-center">Make Payment</h3>
-        
+
         <div className="bg-gray-50 p-4 rounded-xl mb-6 border border-gray-100">
           <p className="text-sm text-gray-500 mb-1">Paying to:</p>
           <p className="font-bold text-lg text-gray-900">{pharmacyName}</p>
