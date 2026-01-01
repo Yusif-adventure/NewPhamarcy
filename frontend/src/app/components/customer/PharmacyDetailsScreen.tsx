@@ -63,44 +63,57 @@ export function PharmacyDetailsScreen({
         const order = await api.orders.getActive(customerData.phone);
 
         if (order) {
-          setActiveOrderId(order.id);
+          // Only show order if it belongs to the selected pharmacy
+          if (order.pharmacy_phone === customerData.selectedPharmacyPhone) {
+            setActiveOrderId(order.id);
 
-          // Map backend status to frontend state
-          if (order.status === "new") {
+            // Map backend status to frontend state
+            if (order.status === "new") {
+              onUpdateData({
+                paymentStatus: "requested",
+                orderStatus: "waiting",
+                paymentAmount: undefined,
+              });
+            } else if (order.status === "payment-pending") {
+              onUpdateData({
+                paymentStatus: "requested",
+                orderStatus: "waiting",
+                paymentAmount: order.amount,
+              });
+            } else if (order.status === "payment-received") {
+              onUpdateData({
+                paymentStatus: "paid",
+                orderStatus: "preparing",
+              });
+            } else if (order.status === "ready") {
+              onUpdateData({
+                paymentStatus: "paid",
+                orderStatus: "finding-rider",
+              });
+            } else if (order.status === "out-for-delivery") {
+              onUpdateData({
+                paymentStatus: "paid",
+                orderStatus: "rider-on-way",
+                riderName: order.rider_name,
+                riderPhone: order.rider_phone,
+              });
+            } else if (order.status === "delivered") {
+              onUpdateData({
+                paymentStatus: "paid",
+                orderStatus: "delivered",
+                riderName: order.rider_name,
+                riderPhone: order.rider_phone,
+              });
+            }
+          } else {
+            // Active order is for a different pharmacy, so treat as no active order for this pharmacy
+            setActiveOrderId(null);
             onUpdateData({
-              paymentStatus: "requested",
+              paymentStatus: "waiting",
               orderStatus: "waiting",
               paymentAmount: undefined,
-            });
-          } else if (order.status === "payment-pending") {
-            onUpdateData({
-              paymentStatus: "requested",
-              orderStatus: "waiting",
-              paymentAmount: order.amount,
-            });
-          } else if (order.status === "payment-received") {
-            onUpdateData({
-              paymentStatus: "paid",
-              orderStatus: "preparing",
-            });
-          } else if (order.status === "ready") {
-            onUpdateData({
-              paymentStatus: "paid",
-              orderStatus: "finding-rider",
-            });
-          } else if (order.status === "out-for-delivery") {
-            onUpdateData({
-              paymentStatus: "paid",
-              orderStatus: "rider-on-way",
-              riderName: order.rider_name,
-              riderPhone: order.rider_phone,
-            });
-          } else if (order.status === "delivered") {
-            onUpdateData({
-              paymentStatus: "paid",
-              orderStatus: "delivered",
-              riderName: order.rider_name,
-              riderPhone: order.rider_phone,
+              riderName: undefined,
+              riderPhone: undefined,
             });
           }
         } else {
